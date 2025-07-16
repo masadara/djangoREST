@@ -15,6 +15,6 @@ class PaymentViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentSerializer
 
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_class = PaymentFilter  # фильтр с полями paid_course, paid_lesson, payment_method
+    filterset_class = PaymentFilter
     ordering_fields = ['payment_date']
     ordering = ['-payment_date']
