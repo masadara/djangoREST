@@ -5,7 +5,7 @@ from .models import Payment
 from .serializers import PaymentSerializer
 from .filters import PaymentFilter
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework.permissions import AllowAny
 
 class UserCreateView(generics.CreateAPIView):
     serializer_class = UserCreateSerializer
@@ -18,3 +18,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
     filterset_class = PaymentFilter
     ordering_fields = ['payment_date']
     ordering = ['-payment_date']
+
+class RegisterView(generics.CreateAPIView):
+    serializer_class = UserCreateSerializer
+    permission_classes = [AllowAny]
