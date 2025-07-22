@@ -16,6 +16,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email', 'phone', 'city', 'avatar')
+
 class PaymentSerializer(serializers.ModelSerializer):
     user = UserCreateSerializer(read_only=True)
     paid_course = CourseSerializer(read_only=True)
