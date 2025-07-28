@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, generics, status
 from courses.models import Course, Lesson, Subscription
-from .paginators import MyPagination
+from .paginators import MyPagination, LessonPagination
 from .serializers import CourseSerializer, LessonSerializer
 from courses.permissions import IsModeratorOrOwner
 from rest_framework.views import APIView
@@ -29,6 +29,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 class LessonListCreateView(generics.ListCreateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    pagination_class = LessonPagination
     # permission_classes = [IsAuthenticated & IsModeratorOrOwner]
     permission_classes = [IsAuthenticated]
 
@@ -45,7 +46,7 @@ class LessonRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
 
 class SubscriptionToggleView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         # request.user гарантированно аутентифицирован или 401
