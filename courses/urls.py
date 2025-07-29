@@ -1,7 +1,8 @@
 from django.urls import path, include
 from courses.apps import CoursesConfig
 from rest_framework.routers import DefaultRouter
-from .views import CourseViewSet, LessonListCreateView, LessonRetrieveUpdateDestroyView, SubscriptionToggleView
+from .views import CourseViewSet, LessonListCreateView, LessonRetrieveUpdateDestroyView, SubscriptionToggleView, \
+    CreatePaymentView
 
 app_name = CoursesConfig.name
 
@@ -14,4 +15,6 @@ urlpatterns = [
     path('lessons/', LessonListCreateView.as_view(), name='lesson-list-create'),
     path('lessons/<int:pk>/', LessonRetrieveUpdateDestroyView.as_view(), name='lesson-detail'),
     path('subscription/toggle/', SubscriptionToggleView.as_view(), name='subscription-toggle'),
+
+    path('create-payment/', CreatePaymentView.as_view(), name='create-payment'),
 ]

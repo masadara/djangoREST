@@ -8,6 +8,9 @@ from courses.permissions import IsModeratorOrOwner
 from rest_framework.views import APIView
 from rest_framework.exceptions import PermissionDenied, NotAuthenticated
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from .models import Payment
+from courses.models import Course
+from .services import create_stripe_product, create_stripe_price, create_stripe_checkout_session
 
 # Create your views here.
 class CourseViewSet(viewsets.ModelViewSet):
@@ -64,4 +67,39 @@ class SubscriptionToggleView(APIView):
             message = 'подписка добавлена'
             status_code = status.HTTP_201_CREATED
         return Response({'message': message}, status=status_code)
+
+class CreatePaymentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        course_id = request.data.get('course_id')
+        if not course_id:
+            return Response({'error': 'course_id не передан'}, status=status.HTTP_400_BAD_REQUEST)
+
+        course = get_object_or_404(Course, id=course_id)
+
+        product = create_stripe_product(name=course.title, description=course.description)
+
+        unit_amount = int(course.price * 100)
+
+        price = create_stripe_price(product_id=product['id'], unit_amount=unit_amount, currency='usd')
+
+        success_url = request.build_absolute_uri('/payment/success/')
+        cancel_url = request.build_absolute_uri('/payment/cancel/')
+
+        session = create_stripe_checkout_session(price_id=price['id'], success_url=success_url, cancel_url=cancel_url)
+
+        payment = Payment.objects.create(
+            user=request.user,
+            paid_course=course,
+            stripe_product_id=product['id'],
+            stripe_price_id=price['id'],
+            stripe_checkout_session_id=session['id'],
+            payment_url=session['url'],
+        )
+
+        return Response({
+            'payment_id': payment.id,
+            'checkout_url': session['url'],
+        }, status=status.HTTP_201_CREATED)
 
