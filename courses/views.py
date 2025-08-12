@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Payment
 from courses.models import Course
 from .services import create_stripe_product, create_stripe_price, create_stripe_checkout_session
+from courses.tasks import send_course_update_email
 
 # Create your views here.
 class CourseViewSet(viewsets.ModelViewSet):
@@ -19,8 +20,9 @@ class CourseViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     pagination_class = MyPagination
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+    def perform_update(self, serializer):
+        course = serializer.save()
+        send_course_update_email.delay(course.id)
 
     def get_queryset(self):
         user = self.request.user

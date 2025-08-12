@@ -18,6 +18,10 @@ coverage = "^7.10.0"
 django-extensions = "^4.1"
 drf-spectacular = "^0.28.0"
 stripe = "^12.3.0"
+celery = "^5.5.3"
+eventlet = "^0.40.2"
+redis = "^6.4.0"
+django-celery-beat = "^2.8.1"
 
 
 [tool.poetry.group.lint.dependencies]

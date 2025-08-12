@@ -40,7 +40,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     permission_classes_by_action = {
         'create': [permissions.AllowAny],
-        'list': [permissions.IsAdminUser],
+        'list': [permissions.AllowAny],
         'retrieve': [permissions.IsAuthenticated, IsOwnerOrAdmin],
         'update': [permissions.IsAuthenticated, IsOwnerOrAdmin],
         'partial_update': [permissions.IsAuthenticated, IsOwnerOrAdmin],
