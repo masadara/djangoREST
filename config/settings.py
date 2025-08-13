@@ -194,7 +194,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 CELERY_BEAT_SCHEDULE = {
     'deactivate-inactive-users-daily': {
-        'task': 'your_app_name.tasks.deactivate_inactive_users',  # замените your_app_name на название приложения с задачей
+        'task': 'users.tasks.deactivate_inactive_users',  # замените your_app_name на название приложения с задачей
         'schedule': crontab(hour=0, minute=0),  # запускать ежедневно в полночь
     },
 }

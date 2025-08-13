@@ -24,6 +24,11 @@ class CourseViewSet(viewsets.ModelViewSet):
         course = serializer.save()
         send_course_update_email.delay(course.id)
 
+    def perform_create(self, serializer):
+        if not self.request.user or not self.request.user.is_authenticated:
+            raise NotAuthenticated('Требуется аутентификация')
+        serializer.save(owner=self.request.user)
+
     def get_queryset(self):
         user = self.request.user
         if user.groups.filter(name='moderators').exists():
