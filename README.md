@@ -29,6 +29,7 @@
 ```
 
 6. Проверьте доступность базы:
+
 ```
     docker-compose exec web python manage.py dbshell
 ```
