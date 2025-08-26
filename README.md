@@ -33,5 +33,6 @@
 ```
     docker-compose exec web python manage.py dbshell
 ```
+
 7. Перейти по адресу: http://127.0.0.1:8000
 
