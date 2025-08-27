@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir poetry
 
 # Устанавливаем зависимости проекта через Poetry в виртуальное окружение
 RUN poetry config virtualenvs.create false \
-  && poetry install --no-interaction --no-ansi --no-root
+  && poetry install --no-interaction --no-ansi --no-root --verbose
 
 # Копируем исходники проекта
 COPY . /app/
