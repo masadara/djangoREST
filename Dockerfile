@@ -1,34 +1,43 @@
-# Используем официальный Python базовый образ
+# Используем официальный облегчённый образ Python
 FROM python:3.10-slim
 
-# Устанавливаем системные зависимости
+# Флаги для корректного вывода логов Python и запрета записи байт-кода
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Обновляем менеджер пакетов и устанавливаем системные зависимости
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
+    gcc \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Устанавливаем рабочую директорию приложения в контейнере
+# Установка Poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH="/root/.local/bin:$PATH"
+
+# Устанавливаем рабочую директорию в контейнере
 WORKDIR /app
 
-# Копируем файлы для установки зависимостей
+# Копируем файлы с зависимостями в контейнер
 COPY pyproject.toml poetry.lock* /app/
 
-# Устанавливаем Poetry
-RUN pip install --no-cache-dir poetry
-
-# Устанавливаем зависимости проекта через Poetry в виртуальное окружение
+# Обновляем pip и устанавливаем зависимости через Poetry без создания виртуального окружения
+RUN pip install --upgrade pip setuptools wheel
 RUN poetry config virtualenvs.create false \
-  && poetry install --no-interaction --no-ansi --no-root --verbose
+    && poetry install --no-interaction --no-ansi --no-root
 
-# Копируем исходники проекта
+# Копируем весь проект в контейнер
 COPY . /app/
 
-# Выполняем миграции и собираем статику при билде (опционально)
+# Применяем миграции и собираем статику при сборке (опционально)
 RUN python manage.py migrate --noinput
 RUN python manage.py collectstatic --noinput
 
 # Открываем порт приложения
 EXPOSE 8000
 
-# Команда запуска проекта через gunicorn
+# Команда запуска Gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]
+
