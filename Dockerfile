@@ -27,10 +27,6 @@ RUN poetry install --no-root
 # Копируем весь проект в контейнер
 COPY . /app/
 
-# Выполняем миграции и сборку статики
-RUN python manage.py migrate --noinput
-RUN python manage.py collectstatic --noinput
-
 EXPOSE 8000
 
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]
