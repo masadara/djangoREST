@@ -18,6 +18,7 @@ WORKDIR /app
 # Копируем только файлы с зависимостями для кеширования слоев Docker
 COPY pyproject.toml poetry.lock* /app/
 
+
 # Указываем Poetry не создавать виртуальное окружение, чтобы установить зависимости в контейнер
 RUN poetry config virtualenvs.create false
 
