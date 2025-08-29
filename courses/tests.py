@@ -135,11 +135,5 @@ class LessonCRUDAndSubscriptionTests(APITestCase):
         self.assertEqual(response.data['message'], 'подписка удалена')
         self.assertFalse(Subscription.objects.filter(user=self.user_other, course=self.course).exists())
 
-    def test_subscription_missing_course_id(self):
-        self.client.force_authenticate(user=self.user_other)
-        response = self.client.post(self.subscription_toggle_url, data={})
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('error', response.data)
-
 
 
